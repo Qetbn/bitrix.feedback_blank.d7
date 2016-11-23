@@ -37,7 +37,7 @@ class FeedbackComponent extends CBitrixComponent
                     'Введите действительный E-Mail.' => !check_email($this->arResult["form"]['email']),
                     'Срок вашей сессии истёк, перегрузите страницу.' => !check_bitrix_sessid()
                 );
-                foreach($errors as $k=>$v) {
+                foreach ($errors as $k => $v) {
                     if ($v) {
                         $this->arResult["errors"][] = $k;
                     }
@@ -46,24 +46,26 @@ class FeedbackComponent extends CBitrixComponent
                 /**
                  * Сохранить элемент инфоблока
                  */
-                Loader::includeModule("iblock");
-                $arElementFields = array(
-                    'IBLOCK_ID' => $this->arParams["IBLOCK_ID"],
-                    'ACTIVE' => 'Y',
-                    'NAME' => $this->arResult["form"]['name'],
-                    'PREVIEW_TEXT' => $this->arResult["form"]['message'],
-                    'PROPERTY_VALUES' => array('EMAIL' => $this->arResult["form"]['email'])
-                );
-                $element = new CiblockElement();
-                $arEventFields["ID"] = $element->Add($arElementFields);
+                if ($this->arParams["IBLOCK_ID"]) {
+                    Loader::includeModule("iblock");
+                    $arElementFields = array(
+                        'IBLOCK_ID' => $this->arParams["IBLOCK_ID"],
+                        'ACTIVE' => 'Y',
+                        'NAME' => $this->arResult["form"]['name'],
+                        'PREVIEW_TEXT' => $this->arResult["form"]['message'],
+                        'PROPERTY_VALUES' => array('EMAIL' => $this->arResult["form"]['email'])
+                    );
+                    $element = new CiblockElement();
+                    $arEventFields["ID"] = $element->Add($arElementFields);
+                }
                 /**
                  * Отправить письмо
                  */
-                $arEventFields = array();
-                foreach ($this->arResult["form"] as $k => $v) {
-                    $arEventFields[strtoupper($k)] = $v;
-                }
                 if ($this->arParams["EVENT"]) {
+                    $arEventFields = array();
+                    foreach ($this->arResult["form"] as $k => $v) {
+                        $arEventFields[strtoupper($k)] = $v;
+                    }
                     \CEvent::Send($this->arParams["EVENT"], array(SITE_ID), $arEventFields);
                 }
 
@@ -72,3 +74,6 @@ class FeedbackComponent extends CBitrixComponent
         $this->IncludeComponentTemplate();
     }
 }
+
+
+?>
