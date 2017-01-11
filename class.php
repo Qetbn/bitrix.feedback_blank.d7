@@ -46,6 +46,7 @@ class FeedbackComponent extends CBitrixComponent
                 /**
                  * Сохранить элемент инфоблока
                  */
+                $arEventFields = array();
                 if ($this->arParams["IBLOCK_ID"]) {
                     Loader::includeModule("iblock");
                     $arElementFields = array(
@@ -62,7 +63,6 @@ class FeedbackComponent extends CBitrixComponent
                  * Отправить письмо
                  */
                 if ($this->arParams["EVENT"]) {
-                    $arEventFields = array();
                     foreach ($this->arResult["form"] as $k => $v) {
                         $arEventFields[strtoupper($k)] = $v;
                     }
